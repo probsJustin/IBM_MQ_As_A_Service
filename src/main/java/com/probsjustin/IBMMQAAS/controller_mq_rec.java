@@ -52,6 +52,6 @@ public class controller_mq_rec {
 	}
 	
 	HttpServletResponse controller(HttpServletRequest func_request, HttpServletResponse func_response, identification_request_holder func_identification_request_holder_instance) {
-		
+		return func_response;
 	}
 }
