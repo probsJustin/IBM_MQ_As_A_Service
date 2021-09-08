@@ -1,13 +1,24 @@
-mqseries:
-  image: ibmcom/mq:latest
-  ports:
-    - "1414:1414"
-    - "9443:9443"
-  hostname: mq
-  environment:
-    - LICENSE=accept
-    - MQ_QMGR_NAME=QM1
-  container_name: mqserver
-  stdin_open: true
-  tty: true
-  restart: always
+version: '3'
+services:
+  mqseries:
+    image: ibmcom/mq:latest
+    ports:
+      - "1414:1414"
+      - "9443:9443"
+      - "22:9092"
+    hostname: mq
+    environment:
+      - LICENSE=accept
+      - MQ_QMGR_NAME=QM1
+      - MQ_APP_PASSWORD=passw0rd 
+      - MQ_TLS_KEYSTORE=/mnt/mqm/MQServer/certs/key.p12 
+      - MQ_TLS_PASSPHRASE=k3ypassw0rd 
+
+    volumes:
+        - ./certs:/mnt/mqm
+    container_name: mqserver
+    stdin_open: true
+    tty: true
+    restart: always
+    
+
