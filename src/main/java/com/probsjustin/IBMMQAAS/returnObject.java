@@ -19,6 +19,7 @@ public class returnObject<T> {
 		this.timestamp = timestamp.toString(); 
 		this.info = "<INIT> :: " + this.timestamp; 
 	}
+	
 	returnObject(Object func_object){
 		Date date = new Date();
 		Timestamp timestamp = new Timestamp(date.getTime());
