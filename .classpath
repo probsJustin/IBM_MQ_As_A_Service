@@ -13,11 +13,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/java/kafka-clients-2.7.0.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="C:/java/slf4j-jdk14-1.7.2.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -28,5 +23,14 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/bcpkix-jdk15on-1.64.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/bcprov-jdk15on-1.64.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/com.ibm.mq.allclient-9.1.5.0.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/gson-2.8.5.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/javax.jms-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/javax.servlet-api-4.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/json-20080701.jar"/>
+	<classpathentry kind="lib" path="C:/Repos/IBM_MQ_As_A_Service/target/dependency/junit-4.12.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
