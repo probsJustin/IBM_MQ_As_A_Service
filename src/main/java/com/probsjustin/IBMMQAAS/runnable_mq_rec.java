@@ -13,41 +13,67 @@ import com.ibm.msg.client.wmq.WMQConstants;
 public class runnable_mq_rec {
 
     logger_internal instance_logger_internal = new logger_internal();
+    String targetHostName = ""; 
+    String targetPort = ""; 
+    String targetQueueManager = ""; 
+    String targetChannel = ""; 
+    String targetQueue = ""; 
+    String targetUsername = null; 
+    String targetPassword = null; 
 
-
-    runnable_mq_rec() {
-
+    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel ) {
+    	this.targetHostName = func_targetHostName; 
+    	this.targetPort = func_targetPort; 
+    	this.targetQueueManager = func_targetQueueManager; 
+    	this.targetChannel = func_targetChannel; 
+    }
+    
+    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetUsername, String func_targetPassword) {
+    	this.targetHostName = func_targetHostName; 
+    	this.targetPort = func_targetPort; 
+    	this.targetQueueManager = func_targetQueueManager; 
+    	this.targetChannel = func_targetChannel; 
+    	this.targetUsername = func_targetUsername;
+    	this.targetPassword = func_targetPassword; 
     }
 
+    MQQueueConnectionFactory addInstanceVariablesToMQCONN_Factory(MQQueueConnectionFactory func_instanceConnectionFactory) throws NumberFormatException, JMSException {
+    	func_instanceConnectionFactory.setHostName(this.targetHostName);
+    	func_instanceConnectionFactory.setPort(Integer.parseInt(this.targetPort));
+    	func_instanceConnectionFactory.setQueueManager(this.targetQueueManager);
+    	func_instanceConnectionFactory.setChannel(this.targetChannel);
+		return func_instanceConnectionFactory;
+    }
+    
     void run() {
 
         try {
-            MQQueueConnectionFactory cf = new MQQueueConnectionFactory();
-            cf.setHostName("localhost");
-            cf.setPort(1414);
+            MQQueueConnectionFactory instanceConnectionFactory = new MQQueueConnectionFactory();
+            
+            instanceConnectionFactory = addInstanceVariablesToMQCONN_Factory(instanceConnectionFactory);
+            instanceConnectionFactory.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+            MQQueueConnection instnace_connection = null; 
+            
+            if(this.targetUsername != null && this.targetPassword != null) {
+            	instnace_connection = (MQQueueConnection) instanceConnectionFactory.createQueueConnection(this.targetUsername, this.targetPassword);
+            }else {
+            	instnace_connection = (MQQueueConnection) instanceConnectionFactory.createQueueConnection();
+            }
+            
+            MQQueueSession instance_session = (MQQueueSession) instnace_connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 
-            cf.setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT);
+            MQQueue instnace_queue = (MQQueue) instance_session.createQueue(this.targetQueue);
 
-            cf.setQueueManager("QM_GRIDSERVER");
-            cf.setChannel("SYSTEM.ADMIN.SVRCONN");
+            MQQueueReceiver instance_receiver = (MQQueueReceiver) instance_session.createReceiver(instnace_queue);
 
-            MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection();
-            //MQQueueConnection connection = (MQQueueConnection) cf.createQueueConnection("username","password");
+            instnace_connection.start();
 
-            MQQueueSession session = (MQQueueSession) connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-
-            MQQueue queue = (MQQueue) session.createQueue("queue:///MyTestQueue");
-
-            MQQueueReceiver receiver = (MQQueueReceiver) session.createReceiver(queue);
-
-            connection.start();
-
-            TextMessage receivedMessage = (TextMessage) receiver.receive();
+            TextMessage receivedMessage = (TextMessage) instance_receiver.receive();
             System.out.println("Received message from Queue MyTestQueue: " + receivedMessage.getText());
 
-            receiver.close();
-            session.close();
-            connection.close();
+            instance_receiver.close();
+            instance_session.close();
+            instnace_connection.close();
             System.out.println("Message Received OK.\n");
         } catch (JMSException jmsex) {
             System.out.println(jmsex);
