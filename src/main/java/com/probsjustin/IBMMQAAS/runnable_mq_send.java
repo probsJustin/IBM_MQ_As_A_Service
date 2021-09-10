@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Map;
 
 import com.ibm.mq.MQAsyncStatus;
 import com.ibm.mq.MQException;
@@ -27,21 +28,27 @@ public class runnable_mq_send {
     String targetMessage = ""; 
 	
 	runnable_mq_send(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetUsername, String func_targetPassword, String func_targetMessage){
-    	this.targetHostName = func_targetHostName; 
-    	this.targetPort = func_targetPort; 
-    	this.targetQueueManager = func_targetQueueManager; 
-    	this.targetChannel = func_targetChannel; 
-    	this.targetUsername = func_targetUsername;
-    	this.targetPassword = func_targetPassword; 
-    	this.targetMessage = func_targetMessage;
+    	this.targetHostName = 		func_targetHostName; 
+    	this.targetPort = 			func_targetPort; 
+    	this.targetQueueManager = 	func_targetQueueManager; 
+    	this.targetChannel = 		func_targetChannel; 
+    	this.targetUsername = 		func_targetUsername;
+    	this.targetPassword = 		func_targetPassword; 
+    	this.targetMessage = 		func_targetMessage;
 	}
 	runnable_mq_send(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetMessage){
-    	this.targetHostName = func_targetHostName; 
-    	this.targetPort = func_targetPort; 
-    	this.targetQueueManager = func_targetQueueManager; 
-    	this.targetChannel = func_targetChannel; 
-    	this.targetMessage = func_targetMessage;
-
+    	this.targetHostName = 		func_targetHostName; 
+    	this.targetPort = 			func_targetPort; 
+    	this.targetQueueManager = 	func_targetQueueManager; 
+    	this.targetChannel = 		func_targetChannel; 
+    	this.targetMessage = 		func_targetMessage;
+	}
+	runnable_mq_send(Map<String, String> func_realParametersFromUser){
+    	this.targetHostName = 		func_realParametersFromUser.get("hostName"); 
+    	this.targetPort = 			func_realParametersFromUser.get("port"); 
+    	this.targetQueueManager = 	func_realParametersFromUser.get("queuemanager"); 
+    	this.targetChannel = 		func_realParametersFromUser.get("channel"); 
+    	this.targetMessage = 		func_realParametersFromUser.get("message");
 	}
 	
 	Hashtable<String, Object> setProperties(Hashtable<String, Object> func_hashTableNewInstance){

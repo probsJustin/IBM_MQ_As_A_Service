@@ -34,7 +34,7 @@ public class servlet_mq_send extends HttpServlet {
 		identification_request_holder temp_identification_request_holder = new identification_request_holder(request.getRequestURI(), new Date() , request.getRemoteAddr()); 
 		instance_logger_internal.debug(temp_identification_request_holder.getRequest_ID_String() + " Servlet Recieved Incoming Request");
 		controller_mq_send inst_controller_mq_send = new controller_mq_send(request, response);
-		response = inst_controller_mq_send.controller(request, response, temp_identification_request_holder); 
+		response = inst_controller_mq_send.controller(temp_identification_request_holder); 
 	}
 
 	/**
