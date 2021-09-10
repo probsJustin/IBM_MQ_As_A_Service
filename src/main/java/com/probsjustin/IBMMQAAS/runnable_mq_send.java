@@ -17,61 +17,84 @@ public class runnable_mq_send {
 
 	
 	logger_internal instance_logger_internal = new logger_internal(); 
-
+    String targetHostName = ""; 
+    String targetPort = ""; 
+    String targetQueueManager = ""; 
+    String targetChannel = ""; 
+    String targetQueue = ""; 
+    String targetUsername = null; 
+    String targetPassword = null; 
+    String targetMessage = ""; 
 	
-	runnable_mq_send(){
-		
+	runnable_mq_send(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetUsername, String func_targetPassword, String func_targetMessage){
+    	this.targetHostName = func_targetHostName; 
+    	this.targetPort = func_targetPort; 
+    	this.targetQueueManager = func_targetQueueManager; 
+    	this.targetChannel = func_targetChannel; 
+    	this.targetUsername = func_targetUsername;
+    	this.targetPassword = func_targetPassword; 
+    	this.targetMessage = func_targetMessage;
+	}
+	runnable_mq_send(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetMessage){
+    	this.targetHostName = func_targetHostName; 
+    	this.targetPort = func_targetPort; 
+    	this.targetQueueManager = func_targetQueueManager; 
+    	this.targetChannel = func_targetChannel; 
+    	this.targetMessage = func_targetMessage;
+
+	}
+	
+	Hashtable<String, Object> setProperties(Hashtable<String, Object> func_hashTableNewInstance){
+		func_hashTableNewInstance.put(MQConstants.CHANNEL_PROPERTY, this.targetChannel);
+		func_hashTableNewInstance.put(MQConstants.PORT_PROPERTY, Integer.parseInt(targetPort));
+		func_hashTableNewInstance.put(MQConstants.HOST_NAME_PROPERTY, this.targetHostName);
+		return func_hashTableNewInstance;
 	}
 	
 	void run() {
 		 // Create a connection to the queue manager
-        Hashtable<String, Object> props = new Hashtable<String, Object>();
-        props.put(MQConstants.CHANNEL_PROPERTY, "WM.SVRCONN.001");
-        props.put(MQConstants.PORT_PROPERTY, 1438);
-        props.put(MQConstants.HOST_NAME_PROPERTY, "cinhtau.net");
+        Hashtable<String, Object> properties = setProperties(new Hashtable<String, Object>());
 
-        String qManager = "DEMO";
-        String queueName = "TEST.HELLO";
-        MQQueueManager qMgr = null;
+        MQQueueManager instance_queueManager = null;
         try {
-            qMgr = new MQQueueManager(qManager, props);
+        	instance_queueManager = new MQQueueManager(this.targetQueueManager, properties);
 
             // MQOO_OUTPUT = Open the queue to put messages. The queue is opened for use with subsequent MQPUT calls.
             // MQOO_INPUT_AS_Q_DEF = Open the queue to get messages using the queue-defined default.
             // The queue is opened for use with subsequent MQGET calls. The type of access is either
             // shared or exclusive, depending on the value of the DefInputOpenOption queue attribute.
-            int openOptions = MQConstants.MQOO_OUTPUT | MQConstants.MQOO_INPUT_AS_Q_DEF;
+            int instnace_openOptions = MQConstants.MQOO_OUTPUT | MQConstants.MQOO_INPUT_AS_Q_DEF;
 
             // creating destination
-            MQQueue queue = qMgr.accessQueue(queueName, openOptions);
+            MQQueue instance_MQQueue = instance_queueManager.accessQueue(this.targetQueueManager, instnace_openOptions);
 
             // specify the message options...
-            MQPutMessageOptions pmo = new MQPutMessageOptions(); // default
+            MQPutMessageOptions instance_MQPutMessageOptions = new MQPutMessageOptions(); // default
             // MQPMO_ASYNC_RESPONSE = The MQPMO_ASYNC_RESPONSE option requests that an MQPUT or MQPUT1 operation
             // is completed without the application waiting for the queue manager to complete the call.
             // Using this option can improve messaging performance, particularly for applications using client bindings.
-            pmo.options = MQConstants.MQPMO_ASYNC_RESPONSE;
+            instance_MQPutMessageOptions.options = MQConstants.MQPMO_ASYNC_RESPONSE;
 
             // create message
-            MQMessage message = new MQMessage();
+            MQMessage instance_MQMessage = new MQMessage();
             // MQFMT_STRING = The application message data can be either an SBCS string (single-byte character set),
             // or a DBCS string (double-byte character set). Messages of this format can be converted
             // if the MQGMO_CONVERT option is specified on the MQGET call.
-            message.format = MQConstants.MQFMT_STRING;
-            message.writeString("<message>Hallo Vinh</message>");
-            queue.put(message, pmo);
-            queue.close();
+            instance_MQMessage.format = MQConstants.MQFMT_STRING;
+            instance_MQMessage.writeString(this.targetMessage);
+            instance_MQQueue.put(instance_MQMessage, instance_MQPutMessageOptions);
+            instance_MQQueue.close();
 
-            MQAsyncStatus asyncStatus = qMgr.getAsyncStatus();
+            MQAsyncStatus asyncStatus = instance_queueManager.getAsyncStatus();
             assertEquals(1, asyncStatus.putSuccessCount);
         } catch (MQException e) {
         	instance_logger_internal.error("Die Verbindung zum Message Broker mit den "
-                    + "Eigenschaften {} und dem QueueManager {} konnte nicht hergestellt werden." + props.toString() + qManager.toString() + e.toString());
+                    + "Eigenschaften {} und dem QueueManager {} konnte nicht hergestellt werden." + properties.toString() + this.targetQueueManager.toString() + e.toString());
         } catch (IOException e) {
         	instance_logger_internal.error("Fehler beim Schreiben der Message." + e.toString());
         } finally {
             try {
-                qMgr.disconnect();
+            	instance_queueManager.disconnect();
             } catch (MQException e) {
             	instance_logger_internal.error("Die Verbindung konnte nicht geschlossen werden." + e.toString());
             }
