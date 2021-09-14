@@ -14,7 +14,7 @@ import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.constants.MQConstants;
 
-public class runnable_mq_send {
+public class runnable_mq_send implements Runnable {
 
 	
 	logger_internal instance_logger_internal = new logger_internal(); 
@@ -58,7 +58,7 @@ public class runnable_mq_send {
 		return func_hashTableNewInstance;
 	}
 	
-	void run() {
+	public void run() {
 		 // Create a connection to the queue manager
         Hashtable<String, Object> properties = setProperties(new Hashtable<String, Object>());
 

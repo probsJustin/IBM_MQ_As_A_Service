@@ -1,5 +1,7 @@
 package com.probsjustin.IBMMQAAS;
 
+import java.util.Map;
+
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -10,7 +12,7 @@ import com.ibm.mq.jms.MQQueueReceiver;
 import com.ibm.mq.jms.MQQueueSession;
 import com.ibm.msg.client.wmq.WMQConstants;
 
-public class runnable_mq_rec {
+public class runnable_mq_rec implements Runnable {
 
     logger_internal instance_logger_internal = new logger_internal();
     String targetHostName = ""; 
@@ -21,23 +23,28 @@ public class runnable_mq_rec {
     String targetUsername = null; 
     String targetPassword = null; 
 
-    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel ) {
-    	this.targetHostName = func_targetHostName; 
-    	this.targetPort = func_targetPort; 
-    	this.targetQueueManager = func_targetQueueManager; 
-    	this.targetChannel = func_targetChannel; 
-    }
-    
-    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetUsername, String func_targetPassword) {
-    	this.targetHostName = func_targetHostName; 
-    	this.targetPort = func_targetPort; 
-    	this.targetQueueManager = func_targetQueueManager; 
-    	this.targetChannel = func_targetChannel; 
-    	this.targetUsername = func_targetUsername;
-    	this.targetPassword = func_targetPassword; 
-    }
+    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetUsername, String func_targetPassword, String func_targetMessage){
+    	this.targetHostName = 		func_targetHostName; 
+    	this.targetPort = 			func_targetPort; 
+    	this.targetQueueManager = 	func_targetQueueManager; 
+    	this.targetChannel = 		func_targetChannel; 
+    	this.targetUsername = 		func_targetUsername;
+    	this.targetPassword = 		func_targetPassword; 
+	}
+    runnable_mq_rec(String func_targetHostName, String func_targetPort, String func_targetQueueManager, String func_targetChannel, String func_targetQueue, String func_targetMessage){
+    	this.targetHostName = 		func_targetHostName; 
+    	this.targetPort = 			func_targetPort; 
+    	this.targetQueueManager = 	func_targetQueueManager; 
+    	this.targetChannel = 		func_targetChannel; 
+	}
+    runnable_mq_rec(Map<String, String> func_realParametersFromUser){
+    	this.targetHostName = 		func_realParametersFromUser.get("hostName"); 
+    	this.targetPort = 			func_realParametersFromUser.get("port"); 
+    	this.targetQueueManager = 	func_realParametersFromUser.get("queuemanager"); 
+    	this.targetChannel = 		func_realParametersFromUser.get("channel"); 
+	}
 
-    MQQueueConnectionFactory addInstanceVariablesToMQCONN_Factory(MQQueueConnectionFactory func_instanceConnectionFactory) throws NumberFormatException, JMSException {
+	MQQueueConnectionFactory addInstanceVariablesToMQCONN_Factory(MQQueueConnectionFactory func_instanceConnectionFactory) throws NumberFormatException, JMSException {
     	func_instanceConnectionFactory.setHostName(this.targetHostName);
     	func_instanceConnectionFactory.setPort(Integer.parseInt(this.targetPort));
     	func_instanceConnectionFactory.setQueueManager(this.targetQueueManager);
@@ -45,7 +52,7 @@ public class runnable_mq_rec {
 		return func_instanceConnectionFactory;
     }
     
-    void run() {
+    public void run() {
 
         try {
             MQQueueConnectionFactory instanceConnectionFactory = new MQQueueConnectionFactory();
